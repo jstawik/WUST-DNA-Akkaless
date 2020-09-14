@@ -24,7 +24,7 @@ object Simulator extends App {
   //  }
   //)
   //saveCSV("testFile", resultsCG)
-  println("Nauka dziękuje Ci za Twoje zaangażowanie towarzyszu!")
+  println("Starting")
   val resultsNH: ParSeq[Seq[Map[String, Double]]] = (0 until iterations).par.map(_ => {
     var reports = Seq.empty[Map[String, Double]]
     val networkNH = new Network[NodeNH](Grid(gridSide, gridSide), () => new NodeNH(intervals, variables))
@@ -42,7 +42,7 @@ object Simulator extends App {
   val tmp = new PrintWriter(new File(s"$intervals-$variables-$gridSide-$iterations-$steps-${System.currentTimeMillis().toString}.json"))
   tmp.write(resultsNH.toArray.asJson.noSpaces)
   tmp.close()
-  println("We're done here, time to go home")
+  println("Done")
 
   //for(seq <- result) saveCSV(s"${seq.hashCode()}_sequence_of_NH", seq)
   def saveCSV(path: String, data: Seq[Map[String, Double]]): Unit = {
