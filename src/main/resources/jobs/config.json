@@ -1,0 +1,15 @@
+{
+  "networkShape": "Grid",
+  "networkParams": {
+    "sideA": 20,
+    "sideB": 20
+  },
+  "nodeType": "JoinersLeavers",
+  "nodeParams": {
+    "intervals": 20,
+    "variables": 20
+  },
+  "steps": 100,
+  "iterations": 4,
+  "scale": 0.5
+}
