@@ -23,3 +23,5 @@ The code can be build after pulling it from github with a simple `sbt compile` t
 
 The jar file can be run with one optional parameter: path to a directory containing `.json` jobs. It will Try to read each of those files as a `Config` of a simulation and if succesful - execute it. If run without parameters, the current path will be used.
 An example of `.json` job can be seen [here](src/main/resources/jobs/config.json)
+
+One can also just download the [latest release](https://github.com/jstawik/WUST-DNA-Akkaless/releases/tag/v0.1.0) jar file and run it - java being the only requirement.
