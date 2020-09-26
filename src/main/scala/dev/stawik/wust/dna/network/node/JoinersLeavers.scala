@@ -1,23 +1,16 @@
 package dev.stawik.wust.dna.network.node
 
-import dev.stawik.wust.dna.ConfigReader.NodeParams
-import dev.stawik.wust.dna.network.node.JoinersLeavers.JoinersLeaversParams
+import dev.stawik.wust.dna.network.node.ApproxHistograms.ApproxHistogramsParams
 
 import scala.collection.mutable
 import scala.util.Random
-import io.circe.Decoder
-import io.circe.generic.semiauto.deriveDecoder
 
 object JoinersLeavers{
-  case class JoinersLeaversParams(intervals: Int, variables: Int) extends NodeParams
-  object JoinersLeaversParams{
-    implicit val dec: Decoder[JoinersLeaversParams] = deriveDecoder
-  }
-  def joinersLeaversFactory(params: JoinersLeaversParams): () => JoinersLeavers = () =>  new JoinersLeavers(params)
+  def joinersLeaversFactory(params: ApproxHistogramsParams): () => JoinersLeavers = () =>  new JoinersLeavers(params)
 }
 
-class JoinersLeavers(params: JoinersLeaversParams) extends Node{
-  val JoinersLeaversParams(intervals, variables) = params
+class JoinersLeavers(params: ApproxHistogramsParams) extends Node{
+  val ApproxHistogramsParams(intervals, variables) = params
   // knowledge about the Network
   val neighbours = mutable.Set.empty[JoinersLeavers]
   val intervalWidth: () => Double = () => range()/intervals
@@ -33,12 +26,9 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
 
   var individualInterval: Int = -1
 
-  val done: () => Boolean = () => updatedJoiners.isEmpty && updatedLeavers.isEmpty
-
   // interface
-  def receiveNeighbour(neighbour: Node): Unit = {
-    neighbours.add(neighbour.asInstanceOf[JoinersLeavers])
-  }
+  val done: () => Boolean = () => updatedJoiners.isEmpty && updatedLeavers.isEmpty
+  def receiveNeighbour(neighbour: Node): Unit = neighbours.add(neighbour.asInstanceOf[JoinersLeavers])
   def initialize(minV: Double, maxV: Double): Unit = {
     minValue = minV
     maxValue = maxV

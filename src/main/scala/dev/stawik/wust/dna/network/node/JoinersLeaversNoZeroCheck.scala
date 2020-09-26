@@ -1,23 +1,15 @@
 package dev.stawik.wust.dna.network.node
 
-import dev.stawik.wust.dna.ConfigReader.NodeParams
-import dev.stawik.wust.dna.network.node.JoinersLeavers.JoinersLeaversParams
-import dev.stawik.wust.dna.network.node.JoinersLeaversNoZeroCheck.JoinersLeaversNoZeroCheckParams
-import io.circe.Decoder
-import io.circe.generic.semiauto.deriveDecoder
+import dev.stawik.wust.dna.network.node.ApproxHistograms.ApproxHistogramsParams
 
 import scala.collection.mutable
 
 object JoinersLeaversNoZeroCheck{
-  case class JoinersLeaversNoZeroCheckParams(intervals: Int, variables: Int) extends NodeParams
-  object JoinersLeaversNoZeroCheckParams{
-    implicit val dec: Decoder[JoinersLeaversNoZeroCheckParams] = deriveDecoder
-  }
-  def joinersLeaversNoZeroCheckFactory(params: JoinersLeaversNoZeroCheckParams): () => JoinersLeaversNoZeroCheck = () =>  new JoinersLeaversNoZeroCheck(params)
+  def joinersLeaversNoZeroCheckFactory(params: ApproxHistogramsParams): () => JoinersLeaversNoZeroCheck = () =>  new JoinersLeaversNoZeroCheck(params)
 }
 
-class JoinersLeaversNoZeroCheck(params: JoinersLeaversNoZeroCheckParams) extends JoinersLeavers(params.asInstanceOf[JoinersLeaversParams]) {
-  override val JoinersLeaversNoZeroCheckParams(intervals, variables) = params
+class JoinersLeaversNoZeroCheck(params: ApproxHistogramsParams) extends JoinersLeavers(params) {
+  override val ApproxHistogramsParams(intervals, variables) = params
   val neighboursOverriden: mutable.Set[JoinersLeaversNoZeroCheck] = mutable.Set.empty[JoinersLeaversNoZeroCheck] //american notation is intentional
   override def receiveNeighbour(neighbour: Node): Unit = {
     neighboursOverriden.add(neighbour.asInstanceOf[JoinersLeaversNoZeroCheck])

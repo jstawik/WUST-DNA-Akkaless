@@ -3,10 +3,11 @@ package dev.stawik.wust.dna
 import java.io.File
 
 import dev.stawik.wust.dna.ConfigReader.Config
-import dev.stawik.wust.dna.network.node.JoinersLeavers.{joinersLeaversFactory, JoinersLeaversParams}
-import dev.stawik.wust.dna.network.node.JoinersLeaversNoZeroCheck.{joinersLeaversNoZeroCheckFactory, JoinersLeaversNoZeroCheckParams}
+import dev.stawik.wust.dna.network.node.JoinersLeavers.joinersLeaversFactory
+import dev.stawik.wust.dna.network.node.JoinersLeaversNoZeroCheck.joinersLeaversNoZeroCheckFactory
 import dev.stawik.wust.dna.network.Grid
 import dev.stawik.wust.dna.network.Grid.GridParams
+import dev.stawik.wust.dna.network.node.ApproxHistograms.{approxHistogramsFactory, ApproxHistogramsParams}
 
 import scala.collection.parallel.CollectionConverters.ImmutableIterableIsParallelizable
 
@@ -25,8 +26,9 @@ object Simulator extends App {
 
   def executeConfig(config: Config): Unit = {
     val nodeFactory = config.nodeType match {
-      case "JoinersLeavers" => joinersLeaversFactory(config.nodeParams.asInstanceOf[JoinersLeaversParams])
-      case "JoinersLeaversNoZeroCheck" => joinersLeaversNoZeroCheckFactory(config.nodeParams.asInstanceOf[JoinersLeaversNoZeroCheckParams])
+      case "JoinersLeavers" => joinersLeaversFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
+      case "JoinersLeaversNoZeroCheck" => joinersLeaversNoZeroCheckFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
+      case "ApproxHistograms" => approxHistogramsFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
       //case _ => println(s"${config.nodeType} not recognized as nodeType")
     }
     val results = (0 to config.iterations).par.map { _ =>
