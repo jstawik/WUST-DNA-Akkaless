@@ -25,3 +25,11 @@ The jar file can be run with one optional parameter: path to a directory contain
 An example of `.json` job can be seen [here](src/main/resources/jobs/config.json)
 
 One can also just download the [latest release](https://github.com/jstawik/WUST-DNA-Akkaless/releases/tag/v0.1.0) jar file and run it - java being the only requirement.
+
+## Example usage:
+```bash
+> ls
+WUST-DNA-Akkaless-v0.1.0.jar  config.json config2.json
+> java -jar WUST-DNA-Akkaless-v0.1.0.jar
+```
+will run both `config.json` and `config2.json`
