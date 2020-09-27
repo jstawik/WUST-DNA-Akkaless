@@ -25,6 +25,8 @@ object Simulator extends App {
     .map(new ConfigReader(_)).map(_.config).collect{case Right(config) => config}.map(executeConfig)
 
   def executeConfig(config: Config): Unit = {
+    print(s"Executing job: $config.")
+    val startTime = System.nanoTime
     val nodeFactory = config.nodeType match {
       case "JoinersLeavers" => joinersLeaversFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
       case "JoinersLeaversNoZeroCheck" => joinersLeaversNoZeroCheckFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
@@ -45,6 +47,7 @@ object Simulator extends App {
       }
       reports
     }.toSeq
+    println(s" Finished after: ${(System.nanoTime - startTime)/1e9d}")
     ResultWriter.saveJSON(config.toString, results)
   }
 
