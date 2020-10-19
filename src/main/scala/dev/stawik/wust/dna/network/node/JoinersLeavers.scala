@@ -1,16 +1,23 @@
 package dev.stawik.wust.dna.network.node
 
-import dev.stawik.wust.dna.network.node.ApproxHistograms.ApproxHistogramsParams
+import dev.stawik.wust.dna.ConfigReader.NodeParams
+import dev.stawik.wust.dna.network.node.JoinersLeavers.JoinersLeaversParams
+import io.circe.generic.semiauto.deriveDecoder
+import io.circe.Decoder
 
 import scala.collection.mutable
 import scala.util.Random
 
 object JoinersLeavers{
-  def joinersLeaversFactory(params: ApproxHistogramsParams): () => JoinersLeavers = () =>  new JoinersLeavers(params)
+  case class JoinersLeaversParams(intervals: Int, variables: Int, zeroCheck: Boolean) extends NodeParams
+  object JoinersLeaversParams{
+    implicit val dec: Decoder[JoinersLeaversParams] = deriveDecoder
+  }
+  def joinersLeaversFactory(params: JoinersLeaversParams): () => JoinersLeavers = () =>  new JoinersLeavers(params)
 }
 
-class JoinersLeavers(params: ApproxHistogramsParams) extends Node{
-  val ApproxHistogramsParams(intervals, variables) = params
+class JoinersLeavers(params: JoinersLeaversParams) extends Node{
+  val JoinersLeaversParams(intervals, variables, zeroCheck) = params
   // knowledge about the Network
   val neighbours = mutable.Set.empty[JoinersLeavers]
   val intervalWidth: () => Double = () => range()/intervals
@@ -89,8 +96,10 @@ class JoinersLeavers(params: ApproxHistogramsParams) extends Node{
     val Sd: Array[Double] = leavers.map(_.sum)
     val H: Array[Double] = S.map(a => if (a > 0) (variables-1)/a else 0)
     val Hd: Array[Double] = Sd.map(a => if (a > 0) (variables-1)/a else 0)
-    val S1 = (for(i <- H.indices) yield (minValue + intervalWidth()*(i - 1/2))*(H(i)-Hd(i)).max(0)).sum
-    val S2 = (for(i <- H.indices) yield (H(i)-Hd(i)).max(0) ).sum
+    val S1 = if(zeroCheck) (for (i <- H.indices) yield (minValue + intervalWidth() * (i - 1 / 2)) * (H(i) - Hd(i)).max(0)).sum
+      else (for(i <- H.indices) yield (minValue + intervalWidth()*(i - 1/2))*(H(i)-Hd(i))).sum
+    val S2 = if(zeroCheck) (for (i <- H.indices) yield (H(i) - Hd(i)).max(0)).sum
+      else H.sum - Hd.sum
     S1/S2
   }
 }

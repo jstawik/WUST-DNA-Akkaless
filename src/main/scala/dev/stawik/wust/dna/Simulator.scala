@@ -3,8 +3,7 @@ package dev.stawik.wust.dna
 import java.io.File
 
 import dev.stawik.wust.dna.ConfigReader.Config
-import dev.stawik.wust.dna.network.node.JoinersLeavers.joinersLeaversFactory
-import dev.stawik.wust.dna.network.node.JoinersLeaversNoZeroCheck.joinersLeaversNoZeroCheckFactory
+import dev.stawik.wust.dna.network.node.JoinersLeavers.{joinersLeaversFactory, JoinersLeaversParams}
 import dev.stawik.wust.dna.network.Grid
 import dev.stawik.wust.dna.network.Grid.GridParams
 import dev.stawik.wust.dna.network.node.ApproxHistograms.{approxHistogramsFactory, ApproxHistogramsParams}
@@ -28,8 +27,7 @@ object Simulator extends App {
     print(s"Executing job: $config.")
     val startTime = System.nanoTime
     val nodeFactory = config.nodeType match {
-      case "JoinersLeavers" => joinersLeaversFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
-      case "JoinersLeaversNoZeroCheck" => joinersLeaversNoZeroCheckFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
+      case "JoinersLeavers" => joinersLeaversFactory(config.nodeParams.asInstanceOf[JoinersLeaversParams])
       case "ApproxHistograms" => approxHistogramsFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
       //case _ => println(s"${config.nodeType} not recognized as nodeType")
     }
