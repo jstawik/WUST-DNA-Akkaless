@@ -4,8 +4,7 @@ import java.io.File
 
 import dev.stawik.wust.dna.ConfigReader.Config
 import dev.stawik.wust.dna.network.node.JoinersLeavers.{joinersLeaversFactory, JoinersLeaversParams}
-import dev.stawik.wust.dna.network.Grid
-import dev.stawik.wust.dna.network.Grid.GridParams
+import dev.stawik.wust.dna.network.Grid.{gridFactory, GridParams}
 import dev.stawik.wust.dna.network.node.ApproxHistograms.{approxHistogramsFactory, ApproxHistogramsParams}
 
 import scala.collection.parallel.CollectionConverters.ImmutableIterableIsParallelizable
@@ -30,11 +29,12 @@ object Simulator extends App {
       case "JoinersLeavers" => joinersLeaversFactory(config.nodeParams.asInstanceOf[JoinersLeaversParams])
       case "ApproxHistograms" => approxHistogramsFactory(config.nodeParams.asInstanceOf[ApproxHistogramsParams])
     }
+    val networkFactory = config.networkShape match {
+      case "Grid" =>  gridFactory(config.networkParams.asInstanceOf[GridParams], nodeFactory)
+    }
     val results = (0 to config.iterations).par.map { _ =>
       var reports = Seq.empty[Map[String, Double]]
-      val network = config.networkShape match {
-        case "Grid" =>  new Grid(config.networkParams.asInstanceOf[GridParams], nodeFactory)
-      }
+      val network = networkFactory()
       network.autoStep()
       for(_ <- 0 until config.steps){
         network.updateValues(config.scale)
