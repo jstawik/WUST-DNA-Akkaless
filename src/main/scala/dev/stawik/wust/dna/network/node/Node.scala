@@ -21,5 +21,6 @@ trait Node {
   def finalizeStep(): Unit
 
   def result(): Double
-  def report(): Map[String, Double]
+  def report(nodeSpecificResults: Iterable[Double], nodeCount: Int): Map[String, Double]
+  def nodeSpecificResult(): Double
 }

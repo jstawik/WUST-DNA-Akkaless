@@ -13,8 +13,9 @@ object Grid {
   object GridParams{
     implicit val dec: Decoder[GridParams] = deriveDecoder
   }
+  def gridFactory[T <: Node](params: GridParams, newNode: () => T): () => Grid[T] = () => new Grid(params, newNode)
 }
-class Grid[T <: Node](params: GridParams, newNodes: () => T) extends Network[T](newNodes){
+class Grid[T <: Node](params: GridParams, newNode: () => T) extends Network[T](newNode){
   for(x <- 0 until params.sideA){
     for(y <- 0 until params.sideB){
       nodes += (GridLoc(x, y) -> newNode())
