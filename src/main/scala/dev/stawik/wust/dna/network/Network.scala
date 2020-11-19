@@ -49,6 +49,6 @@ abstract class Network[T <: Node](val newNode: () => T) {
   , "EnergyMax" -> nodes.values.map(_.energySpent).max
   , "EnergyMean" -> nodes.values.map(_.energySpent).sum/nodes.size
   , "BinsChangedAvg" -> nodes.values.map(_.binsChanged).sum/nodes.size
-  ) ++ nodes.values.head.report()
+  ) ++ nodes.values.head.report(nodes.values.map(_.nodeSpecificResult()), nodes.size)
 }
 
