@@ -73,9 +73,11 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
     updatedLeavers.addAll(nextLeavers)
     nextLeavers.clear()
   }
-  def report(): Map[String, Double] = Map(
+  def report(nodeSpecificResults: Iterable[Double], nodeCount: Int): Map[String, Double] = Map(
     "Result" -> result()
+    , "RealHistogramMean" -> nodeSpecificResults.sum/nodeCount
   )
+  def nodeSpecificResult(): Double = minValue + intervalWidth() * (individualInterval - 1/2)
 
 
   // internal functionality

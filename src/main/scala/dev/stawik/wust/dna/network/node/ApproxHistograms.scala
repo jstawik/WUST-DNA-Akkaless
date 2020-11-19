@@ -68,7 +68,11 @@ class ApproxHistograms(params: ApproxHistogramsParams) extends Node{
     S1/S2
   }
 
-  def report(): Map[String, Double] = Map("Result" -> result())
+  def report(nodeSpecificResults: Iterable[Double], nodeCount: Int): Map[String, Double] = Map(
+    "Result" -> result()
+    , "RealHistogramMean" -> nodeSpecificResults.sum/nodeCount
+  )
+  def nodeSpecificResult(): Double = minValue + intervalWidth() * (individualInterval - 1/2)
 
   // internal functionality
   def receiveInterval(intervalIndex: Int, newInterval: Array[Double]): Unit ={
