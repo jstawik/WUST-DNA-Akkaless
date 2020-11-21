@@ -7,6 +7,7 @@ import dev.stawik.wust.dna.network.node.JoinersLeavers.{joinersLeaversFactory, J
 import dev.stawik.wust.dna.network.Grid.{gridFactory, GridParams}
 import dev.stawik.wust.dna.network.node.ApproxHistograms.{approxHistogramsFactory, ApproxHistogramsParams}
 import dev.stawik.wust.dna.network.GridClique.{gridQFactory, GridQParams}
+import dev.stawik.wust.dna.network.PBCGrid.pbcGridFactory
 
 import scala.collection.parallel.CollectionConverters.ImmutableIterableIsParallelizable
 
@@ -33,6 +34,7 @@ object Simulator extends App {
     val networkFactory = config.networkShape match {
       case "Grid" =>  gridFactory(config.networkParams.asInstanceOf[GridParams], nodeFactory)
       case "GridClique" => gridQFactory(config.networkParams.asInstanceOf[GridQParams], nodeFactory)
+      case "PBCGrid" => pbcGridFactory(config.networkParams.asInstanceOf[GridParams], nodeFactory)
     }
     val results = (0 to config.iterations).par.map { _ =>
       var reports = Seq.empty[Map[String, Double]]
