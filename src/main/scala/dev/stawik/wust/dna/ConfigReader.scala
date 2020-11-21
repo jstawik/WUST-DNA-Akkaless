@@ -3,22 +3,26 @@ package dev.stawik.wust.dna
 
 import java.io.File
 
-import scala.io.BufferedSource
-import scala.io.Source.fromFile
 import cats.implicits._
 import dev.stawik.wust.dna.network.Grid.GridParams
 import dev.stawik.wust.dna.ConfigReader.Config
 import dev.stawik.wust.dna.network.node.ApproxHistograms.ApproxHistogramsParams
 import dev.stawik.wust.dna.network.node.JoinersLeavers.JoinersLeaversParams
+import dev.stawik.wust.dna.network.GridClique.GridQParams
 import io.circe.Decoder
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.parser.decode
 
+import scala.io.BufferedSource
+import scala.io.Source.fromFile
+
 object ConfigReader{
   trait NetworkParams
   object NetworkParams {
-    implicit val dec: Decoder[NetworkParams] =
-      GridParams.dec.widen[NetworkParams]
+    implicit val dec: Decoder[NetworkParams] = {
+      GridQParams.dec.widen[NetworkParams]
+        .orElse(GridParams.dec.widen[NetworkParams])
+    }
   }
   trait NodeParams
   object NodeParams {

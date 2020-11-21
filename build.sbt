@@ -1,6 +1,6 @@
 name := "WUST-DNA-Akkaless"
 
-version := "0.1"
+version := "0.2"
 scalacOptions += "-deprecation"
 scalaVersion := "2.13.3"
 
