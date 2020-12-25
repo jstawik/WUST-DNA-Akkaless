@@ -13,21 +13,23 @@ object Grid {
   object GridParams{
     implicit val dec: Decoder[GridParams] = deriveDecoder
   }
-  def gridFactory[T <: Node](params: GridParams, newNode: () => T): () => Grid[T] = () => new Grid(params, newNode)
+  def gridFactory[T <: Node](params: GridParams, newNode: String => T): () => Grid[T] = () => new Grid(params, newNode)
 }
-class Grid[T <: Node](params: GridParams, newNode: () => T) extends Network[T](newNode){
-  for(x <- 0 until params.sideA){
-    for(y <- 0 until params.sideB){
-      nodes += (GridLoc(x, y) -> newNode())
-    }
+class Grid[T <: Node](params: GridParams, newNode: String => T) extends Network[T](newNode){
+  lazy val edgeNode = nodes(GridLoc(0,0))
+  val nodes = (for { x <- 0 until params.sideA
+                     y <- 0 until params.sideB} yield GridLoc(x, y) -> newNode(s"$x, $y")).toMap
+
+  def isValid(x: Int, y: Int, o: (Int, Int)): Boolean = {
+    val xo = x + o._1
+    val yo = y + o._2
+    0 <= xo && xo < params.sideA && 0 <= yo && yo < params.sideB
   }
-  for(x <- 0 until params.sideA) {
-    for (y <- 0 until params.sideB) {
-      for { i <- Seq(x-1, x+1) if i >= 0 && i < params.sideA
-            j <- Seq(y-1, y+1) if j >= 0 && j < params.sideB
-            } yield  {nodes(GridLoc(x, y)).receiveNeighbour(nodes(GridLoc(x, j)))
-                      nodes(GridLoc(x, y)).receiveNeighbour(nodes(GridLoc(i, y)))}
-    }
-  }
+  for { x <- 0 until params.sideA
+        y <- 0 until params.sideB
+        offset <- Seq((-1, 0), (1, 0), (0, -1), (0, 1)) if isValid(x, y, offset)
+      } yield {
+        nodes(GridLoc(x, y)).receiveNeighbour(nodes(GridLoc(x+offset._1, y+offset._2)))
+      }
   init()
 }

@@ -13,7 +13,7 @@ object JoinersLeavers{
   object JoinersLeaversParams{
     implicit val dec: Decoder[JoinersLeaversParams] = deriveDecoder
   }
-  def joinersLeaversFactory(params: JoinersLeaversParams): () => JoinersLeavers = () =>  new JoinersLeavers(params)
+  def joinersLeaversFactory(params: JoinersLeaversParams): String => JoinersLeavers = (name) =>  new JoinersLeavers(params){override def toString = name}
 }
 
 class JoinersLeavers(params: JoinersLeaversParams) extends Node{
@@ -76,6 +76,7 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
   def report(nodeSpecificResults: Iterable[Double], nodeCount: Int): Map[String, Double] = Map(
     "Result" -> result()
     , "RealHistogramMean" -> nodeSpecificResults.sum/nodeCount
+    , "EnergyEdge" -> energySpent 
   )
   def nodeSpecificResult(): Double = minValue + intervalWidth() * (individualInterval - 1/2)
 

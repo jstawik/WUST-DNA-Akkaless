@@ -1,11 +1,12 @@
 package dev.stawik.wust.dna.network.node
+import scala.collection.mutable
 
 trait Node {
   // knowledge about the Network
   var minValue: Double = Double.NaN
   var maxValue: Double = Double.NaN
   val range: () => Double = () => maxValue - minValue
-  //val neighbours: mutable.Set[Node]
+  val neighbours: mutable.Set[_ <: Node]
 
   // internal state
   var value: Double = Double.NaN

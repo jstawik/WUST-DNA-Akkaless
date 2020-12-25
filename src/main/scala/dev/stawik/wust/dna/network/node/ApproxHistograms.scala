@@ -13,7 +13,7 @@ object ApproxHistograms{
   object ApproxHistogramsParams{
     implicit val dec: Decoder[ApproxHistogramsParams] = deriveDecoder
   }
-  def approxHistogramsFactory(params: ApproxHistogramsParams): () => ApproxHistograms = () => new ApproxHistograms(params)
+  def approxHistogramsFactory(params: ApproxHistogramsParams): String => ApproxHistograms = (name) => new ApproxHistograms(params){override def toString = name}
 }
 
 class ApproxHistograms(params: ApproxHistogramsParams) extends Node{
@@ -71,6 +71,7 @@ class ApproxHistograms(params: ApproxHistogramsParams) extends Node{
   def report(nodeSpecificResults: Iterable[Double], nodeCount: Int): Map[String, Double] = Map(
     "Result" -> result()
     , "RealHistogramMean" -> nodeSpecificResults.sum/nodeCount
+    , "EnergyEdge" -> energySpent 
   )
   def nodeSpecificResult(): Double = minValue + intervalWidth() * (individualInterval - 1/2)
 

@@ -10,9 +10,10 @@ object Network{
   trait Loc
 }
 
-abstract class Network[T <: Node](val newNode: () => T) {
+abstract class Network[T <: Node](val newNode: String => T) {
   val value: () => Double = () => Random.nextDouble()
-  val nodes = mutable.Map.empty[Loc, T]
+  val nodes: Map[Loc, T]
+  val edgeNode: T
   var minValue: Double = Double.MaxValue
   var maxValue: Double = Double.MinValue
 
@@ -49,6 +50,23 @@ abstract class Network[T <: Node](val newNode: () => T) {
   , "EnergyMax" -> nodes.values.map(_.energySpent).max
   , "EnergyMean" -> nodes.values.map(_.energySpent).sum/nodes.size
   , "BinsChangedAvg" -> nodes.values.map(_.binsChanged).sum/nodes.size
-  ) ++ nodes.values.head.report(nodes.values.map(_.nodeSpecificResult()), nodes.size)
+  ) ++ edgeNode.report(nodes.values.map(_.nodeSpecificResult()), nodes.size)
+
+  def toGraphML: String = {
+    val head = 
+    """<?xml version="1.0" encoding="UTF-8"?>
+    |<graphml xmlns="http://graphml.graphdrawing.org/xmlns"  
+    |  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    |  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+    |  http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+    |<graph id="G" edgedefault="directed">
+    """.stripMargin
+    val vertices = (for(node <- nodes.values) yield s"""<node id="$node" />""").fold("")(_++_)
+    val edges = (for(node <- nodes.values;
+                     neighbour <- node.neighbours) yield s"""<edge source="$node" target="$neighbour"/>""").fold("")(_++_)
+
+    val foot = "</graph></graphml>"
+    head++vertices++edges++foot
+  }
 }
 
