@@ -7,6 +7,7 @@ import io.circe.Decoder
 
 import scala.collection.mutable
 import scala.util.Random
+import scala.collection.mutable.BitSet
 
 object JoinersLeavers{
   case class JoinersLeaversParams(intervals: Int, variables: Int, zeroCheck: Boolean) extends NodeParams
@@ -24,12 +25,12 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
 
   // internal state
   val joiners: Array[Array[Double]] = Array.fill[Double](intervals, variables)(Double.MaxValue)
-  val updatedJoiners = mutable.Set.empty[Int]
-  val nextJoiners = mutable.Set.empty[Int]
+  val updatedJoiners = BitSet.empty
+  val nextJoiners = BitSet.empty
 
   val leavers: Array[Array[Double]] = Array.fill[Double](intervals, variables)(Double.MaxValue)
-  val updatedLeavers = mutable.Set.empty[Int]
-  val nextLeavers = mutable.Set.empty[Int]
+  val updatedLeavers = BitSet.empty
+  val nextLeavers = BitSet.empty
 
   var individualInterval: Int = -1
 
@@ -91,7 +92,7 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
     }
   }
   def receiveLeaver(intervalIndex: Int, newInterval: Array[Double]): Unit = {
-    if(!java.util.Arrays.equals(leavers(intervalIndex),newInterval)){
+    if(!java.util.Arrays.equals(leavers(intervalIndex), newInterval)){
       nextLeavers += intervalIndex
       for(idx <- newInterval.indices) leavers(intervalIndex)(idx) = leavers(intervalIndex)(idx).min(newInterval(idx))
     }

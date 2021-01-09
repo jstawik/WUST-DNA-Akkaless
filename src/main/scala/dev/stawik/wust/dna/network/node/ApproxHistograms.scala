@@ -7,6 +7,7 @@ import io.circe.Decoder
 
 import scala.collection.mutable
 import scala.util.Random
+import scala.collection.mutable.BitSet
 
 object ApproxHistograms{
   case class ApproxHistogramsParams(intervals: Int, variables: Int) extends NodeParams
@@ -24,8 +25,8 @@ class ApproxHistograms(params: ApproxHistogramsParams) extends Node{
 
   //internal state
   val data: Array[Array[Double]] = Array.fill[Double](intervals, variables)(Double.MaxValue)
-  val updatedIndices = mutable.Set.empty[Int]
-  val nextIndices = mutable.Set.empty[Int]
+  val updatedIndices = BitSet.empty
+  val nextIndices = BitSet.empty
 
   var individualInterval: Int = -1
 
