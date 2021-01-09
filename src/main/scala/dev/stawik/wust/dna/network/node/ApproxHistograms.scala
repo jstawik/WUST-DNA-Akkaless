@@ -77,7 +77,7 @@ class ApproxHistograms(params: ApproxHistogramsParams) extends Node{
 
   // internal functionality
   def receiveInterval(intervalIndex: Int, newInterval: Array[Double]): Unit ={
-    if(!data(intervalIndex).sameElements(newInterval)){
+    if(!java.util.Arrays.equals(data(intervalIndex), newInterval)){
      nextIndices += intervalIndex
      for(idx <- newInterval.indices) data(intervalIndex)(idx) = data(intervalIndex)(idx).min(newInterval(idx))
     }

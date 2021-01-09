@@ -65,6 +65,7 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
           updatedLeaver <- updatedLeavers} {neigbour.receiveLeaver(updatedLeaver, leavers(updatedLeaver))
                                             energySpent += 1}
   }
+
   def finalizeStep(): Unit = {
     updatedJoiners.clear()
     updatedJoiners.addAll(nextJoiners)
@@ -73,6 +74,7 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
     updatedLeavers.addAll(nextLeavers)
     nextLeavers.clear()
   }
+
   def report(nodeSpecificResults: Iterable[Double], nodeCount: Int): Map[String, Double] = Map(
     "Result" -> result()
     , "RealHistogramMean" -> nodeSpecificResults.sum/nodeCount
@@ -83,13 +85,13 @@ class JoinersLeavers(params: JoinersLeaversParams) extends Node{
 
   // internal functionality
   def receiveJoiner(intervalIndex: Int, newInterval: Array[Double]): Unit = {
-    if(!joiners(intervalIndex).sameElements(newInterval)){
+    if(!java.util.Arrays.equals(joiners(intervalIndex), newInterval)){
       nextJoiners += intervalIndex
       for(idx <- newInterval.indices) joiners(intervalIndex)(idx) = joiners(intervalIndex)(idx).min(newInterval(idx))
     }
   }
   def receiveLeaver(intervalIndex: Int, newInterval: Array[Double]): Unit = {
-    if(!leavers(intervalIndex).sameElements(newInterval)){
+    if(!java.util.Arrays.equals(leavers(intervalIndex),newInterval)){
       nextLeavers += intervalIndex
       for(idx <- newInterval.indices) leavers(intervalIndex)(idx) = leavers(intervalIndex)(idx).min(newInterval(idx))
     }
