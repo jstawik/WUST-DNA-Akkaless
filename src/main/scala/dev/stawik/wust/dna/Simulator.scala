@@ -11,6 +11,7 @@ import dev.stawik.wust.dna.network.PBCGrid.pbcGridFactory
 
 import scala.collection.parallel.CollectionConverters.ImmutableIterableIsParallelizable
 import scala.collection.mutable.BitSet
+import java.util.concurrent.atomic.AtomicInteger
 object Simulator extends App {
   var configPath: String = "."
   if (args.length != 0 ){
@@ -37,10 +38,10 @@ object Simulator extends App {
       case "PBCGrid" => pbcGridFactory(config.networkParams.asInstanceOf[GridParams], nodeFactory)
     }
 
-    val itersDone = BitSet.empty
+    val itersDone = new AtomicInteger
     val lineRemove = "\u001B[A\r\u001B[2K"
     println(s"Iterations done: 0/${config.iterations}")
-    val results = (0 to config.iterations).par.map { iter =>
+    val results = (0 until config.iterations).par.map { iter =>
       var reports = Seq.empty[Map[String, Double]]
       val network = networkFactory()
       //network.autoStep()
@@ -49,11 +50,10 @@ object Simulator extends App {
         network.autoStep()
         reports = reports appended network.report()
       }
-      itersDone += iter
-      println(lineRemove + s"Iterations done: ${itersDone.size}/${config.iterations}, time elapsed: ${(System.nanoTime - startTime)/1e9d}")
+      println(lineRemove + s"Iterations done: ${itersDone.incrementAndGet()}/${config.iterations}, time elapsed: ${(System.nanoTime - startTime)/1e9d}")
       reports
     }.toSeq
-    println(s" Finished after: ${(System.nanoTime - startTime)/1e9d}")
     ResultWriter.saveJSON(config.toString, results)
+    println(s" Finished after: ${(System.nanoTime - startTime)/1e9d}")
   }
 }
